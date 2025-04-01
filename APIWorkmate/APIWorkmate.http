@@ -1,0 +1,6 @@
+@APIWorkmate_HostAddress = http://localhost:5265
+
+GET {{APIWorkmate_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
