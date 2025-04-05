@@ -1,0 +1,34 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace APIWorkmate.Models;
+
+public class Servico
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public string Titulo { get; set; } = string.Empty;
+
+    [Required]
+    public string Descricao { get; set; } = string.Empty;
+
+    [Required]
+    public decimal Preco { get; set; }
+
+    public string? Localizacao { get; set; }
+
+    public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
+
+    [ForeignKey("Prestador")]
+    public int PrestadorId { get; set; }
+    public Usuario? Prestador { get; set; }
+
+    [ForeignKey("Categoria")]
+    public int CategoriaId { get; set; }
+    public Categoria? Categoria { get; set; }
+
+    public ICollection<Contratacao>? Contratacoes { get; set; }
+    public ICollection<Avaliacao>? Avaliacoes { get; set; }
+}
