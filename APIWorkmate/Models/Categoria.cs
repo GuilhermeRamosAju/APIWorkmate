@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
 
@@ -10,5 +11,6 @@ public class Categoria
     [Required, StringLength(100)]
     public string Nome { get; set; } = string.Empty;
 
+    [JsonIgnore]
     public ICollection<Servico>? Servicos { get; set; }
 }

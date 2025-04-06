@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Contratacao> Contratacoes { get; set; }
     public DbSet<Mensagem> Mensagens { get; set; }
-    public DbSet<Servico> Servicios { get; set; }
+    public DbSet<Servico> Servicos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

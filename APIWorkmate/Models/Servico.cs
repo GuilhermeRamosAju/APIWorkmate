@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
 
@@ -30,6 +31,8 @@ public class Servico
     public int CategoriaId { get; set; }
     public Categoria? Categoria { get; set; }
 
+    [JsonIgnore]
     public ICollection<Contratacao>? Contratacoes { get; set; }
+    [JsonIgnore]
     public ICollection<Avaliacao>? Avaliacoes { get; set; }
 }

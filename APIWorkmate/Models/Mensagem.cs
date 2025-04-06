@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
 
@@ -21,5 +22,7 @@ public class Mensagem
 
     [ForeignKey("Destinatario")]
     public int DestinatarioId { get; set; }
+
+    [JsonIgnore]
     public Usuario? Destinatario { get; set; }
 }

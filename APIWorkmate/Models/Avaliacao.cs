@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
 
@@ -23,5 +24,7 @@ public class Avaliacao
 
     [ForeignKey("Cliente")]
     public int ClienteId { get; set; }
+
+    [JsonIgnore]
     public Usuario? Cliente { get; set; }
 }

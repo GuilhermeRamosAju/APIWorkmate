@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
 
@@ -27,9 +28,14 @@ public class Usuario
 
     public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
 
+    [JsonIgnore]
     public ICollection<Servico>? Servicos { get; set; }
+    [JsonIgnore]
     public ICollection<Contratacao>? Contratacoes { get; set; }
+    [JsonIgnore]
     public ICollection<Avaliacao>? Avaliacoes { get; set; }
+    [JsonIgnore]
     public ICollection<Mensagem>? MensagensEnviadas { get; set; }
+    [JsonIgnore]
     public ICollection<Mensagem>? MensagensRecebidas { get; set; }
 }
