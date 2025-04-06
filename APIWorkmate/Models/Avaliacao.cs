@@ -12,6 +12,7 @@ public class Avaliacao
     [Range(1, 5)]
     public int Nota { get; set; }
 
+    [StringLength(1000)]
     public string? Comentario { get; set; }
 
     public DateTime DataAvaliacao { get; set; } = DateTime.UtcNow;

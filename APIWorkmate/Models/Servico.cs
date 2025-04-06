@@ -8,15 +8,16 @@ public class Servico
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required, StringLength(100)]
     public string Titulo { get; set; } = string.Empty;
 
-    [Required]
+    [Required, StringLength(1000)]
     public string Descricao { get; set; } = string.Empty;
 
     [Required]
     public decimal Preco { get; set; }
 
+    [StringLength(150)]
     public string? Localizacao { get; set; }
 
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;

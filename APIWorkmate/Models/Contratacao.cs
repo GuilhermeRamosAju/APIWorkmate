@@ -10,7 +10,7 @@ public class Contratacao
 
     public DateTime DataContratacao { get; set; } = DateTime.UtcNow;
 
-    [Required]
+    [Required, StringLength(50)]
     public string Status { get; set; } = string.Empty;
 
     [ForeignKey("Servico")]

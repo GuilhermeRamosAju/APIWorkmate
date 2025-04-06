@@ -7,20 +7,22 @@ public class Usuario
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required, StringLength(100)]
     public string Nome { get; set; } = string.Empty;
 
-    [Required, EmailAddress]
+    [Required, EmailAddress, StringLength(255)]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
+    [Required, StringLength(255)]
     public string SenhaHash { get; set; } = string.Empty;
 
+    [StringLength(20)]
     public string? Telefone { get; set; }
 
-    [Required]
+    [Required, StringLength(50)]
     public string Tipo { get; set; } = string.Empty;
 
+    [StringLength(2083)]
     public string? FotoPerfil { get; set; }
 
     public DateTime DataCadastro { get; set; } = DateTime.UtcNow;

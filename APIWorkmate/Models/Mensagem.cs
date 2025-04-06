@@ -8,7 +8,7 @@ public class Mensagem
     [Key]
     public int Id { get; set; }
 
-    [Required]
+    [Required, StringLength(1000)]
     public string Texto { get; set; } = string.Empty;
 
     public DateTime DataEnvio { get; set; } = DateTime.UtcNow;
