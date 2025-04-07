@@ -19,32 +19,61 @@ public class UsuariosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
     {
-        return await _context.Usuarios.ToListAsync();
+        try
+        {
+            return await _context.Usuarios.AsNoTracking().ToListAsync();
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+        }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int:min(1)}")]
     public async Task<ActionResult<Usuario>> GetUsuario(int id)
     {
-        var usuario = await _context.Usuarios.FindAsync(id);
-        if (usuario == null)
+        try
         {
-            return NotFound("Usuário não encontrado");
+            var usuario = await _context.Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado");
+            }
+            return usuario;
         }
-        return usuario;
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+        }
     }
 
     [HttpPost]
     public async Task<ActionResult<Usuario>> CreateUsuario(Usuario usuario)
     {
-        _context.Usuarios.Add(usuario);
-        await _context.SaveChangesAsync();
+        try
+        {
+            if (await _context.Usuarios.AnyAsync(u => u.Email == usuario.Email))
+            {
+                return Conflict("Já existe um usuário com este e-mail.");
+            }
+            _context.Usuarios.Add(usuario);
+            await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
+            return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+        }
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> UpdateUsuario(int id, Usuario usuario)
     {
+
         if (id != usuario.Id)
         {
             return BadRequest("ID informado não corresponde ao ID do usuário.");
@@ -64,40 +93,54 @@ public class UsuariosController : ControllerBase
             }
             else
             {
-                throw;
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
             }
         }
 
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> DeleteUsuario(int id)
     {
-        var usuario = await _context.Usuarios.FindAsync(id);
-        if (usuario == null)
+        try
         {
-            return NotFound("Usuário não encontrado.");
-        }
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
 
-        _context.Usuarios.Remove(usuario);
-        await _context.SaveChangesAsync();
-        return NoContent();
+            _context.Usuarios.Remove(usuario);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+        }
     }
 
-    [HttpGet("{id}/servicos")]
+    [HttpGet("{id:int:min(1)}/servicos")]
     public async Task<ActionResult<IEnumerable<Servico>>> GetServicosPorUsuario(int id)
     {
-        var usuario = await _context.Usuarios
+        try
+        {
+            var usuario = await _context.Usuarios
             .Include(u => u.Servicos)
             .FirstOrDefaultAsync(u => u.Id == id);
 
-        if (usuario == null)
-        {
-            return NotFound("Usuário não encontrado.");
-        }
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
 
-        return Ok(usuario.Servicos);
+            return Ok(usuario.Servicos);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+        }
     }
 
 
