@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using APIWorkmate.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
@@ -20,13 +21,28 @@ public class Usuario
     [StringLength(20)]
     public string? Telefone { get; set; }
 
-    [Required, StringLength(50)]
-    public string Tipo { get; set; } = string.Empty;
+    [Required, EnumDataType(typeof(TipoUsuario))]
+    public TipoUsuario Tipo { get; set; }
 
     [StringLength(2083)]
     public string? FotoPerfil { get; set; }
 
     public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+
+    [StringLength(100)]
+    public string? Cidade { get; set; }
+
+    [StringLength(2)]
+    public string? Estado { get; set; }
+
+    [StringLength(100)]
+    public string? Disponibilidade { get; set; }
+
+    [StringLength(255)]
+    public string? Formacao { get; set; }
+
+    [StringLength(255)]
+    public string? Experiencia { get; set; }
 
     [JsonIgnore]
     public ICollection<Servico>? Servicos { get; set; }

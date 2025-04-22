@@ -1,4 +1,5 @@
 ﻿using APIWorkmate.Context;
+using APIWorkmate.DTOs.Avaliacao;
 using APIWorkmate.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace APIWorkmate.Controllers
         }
 
         [HttpGet("{id:int:min(1)}")]
-        public async Task<ActionResult<Avaliacao>> GetAvaliacao(int id)
+        public async Task<ActionResult<AvaliacaoReadDTO>> GetAvaliacao(int id)
         {
             try
             {
@@ -50,19 +51,29 @@ namespace APIWorkmate.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Avaliacao>> PostAvaliacao(Avaliacao avaliacao)
+        public async Task<ActionResult<AvaliacaoReadDTO>> PostAvaliacao([FromBody] AvaliacaoCreateDTO dto)
         {
-            try
+            var avaliacao = new Avaliacao
             {
-                _context.Avaliacoes.Add(avaliacao);
-                await _context.SaveChangesAsync();
+                Nota = dto.Nota,
+                Comentario = dto.Comentario,
+                ServicoId = dto.ServicoId,
+                ClienteId = dto.ClienteId
+            };
 
-                return CreatedAtAction(nameof(GetAvaliacao), new { id = avaliacao.Id, avaliacao });
-            }
-            catch (Exception)
+            _context.Avaliacoes.Add(avaliacao);
+            await _context.SaveChangesAsync();
+
+            var readDto = new AvaliacaoReadDTO
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
-            }
+                Id = avaliacao.Id,
+                Nota = avaliacao.Nota,
+                Comentario = avaliacao.Comentario,
+                DataAvaliacao = avaliacao.DataAvaliacao,
+                NomeCliente = avaliacao.Cliente.Nome
+            };
+
+            return CreatedAtAction(nameof(GetAvaliacao), new { id = avaliacao.Id }, readDto);
         }
 
         [HttpPut("{id:int:min(1)}")]

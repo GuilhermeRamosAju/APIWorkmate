@@ -30,5 +30,9 @@ public class AppDbContext : DbContext
             .WithMany(u => u.MensagensRecebidas)
             .HasForeignKey(m => m.DestinatarioId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Usuario>()
+            .Property(u => u.Tipo)
+            .HasConversion<string>();
     }
 }

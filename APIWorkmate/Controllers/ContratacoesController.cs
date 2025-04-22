@@ -1,5 +1,10 @@
 ﻿using APIWorkmate.Context;
+using APIWorkmate.DTOs;
+using APIWorkmate.DTOs.Contratacao;
+using APIWorkmate.DTOs.Servico;
+using APIWorkmate.DTOs.Usuario;
 using APIWorkmate.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,15 +22,34 @@ public class ContratacoesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Contratacao>>> GetContratacoes()
+    public async Task<ActionResult<IEnumerable<ContratacaoReadDTO>>> GetContratacoes()
     {
         try
         {
-            return await _context.Contratacoes
+            var contratacoes = await _context.Contratacoes
                 .Include(c => c.Servico)
                 .Include(c => c.Cliente)
                 .AsNoTracking()
                 .ToListAsync();
+
+            var contratacoesDTO = contratacoes.Select(c => new ContratacaoReadDTO
+            {
+                Id = c.Id,
+                DataContratacao = c.DataContratacao,
+                Status = c.Status,
+                Cliente = new UsuarioReadDTO
+                {
+                    Id = c.Cliente.Id,
+                    Nome = c.Cliente.Nome
+                },
+                Servico = new ServicoReadDTO
+                {
+                    Id = c.Servico.Id,
+                    Titulo = c.Servico.Titulo
+                }
+            });
+
+            return Ok(contratacoesDTO);
         }
         catch (Exception)
         {
@@ -34,7 +58,7 @@ public class ContratacoesController : ControllerBase
     }
 
     [HttpGet("{id:int:min(1)}")]
-    public async Task<ActionResult<Contratacao>> GetContratacao(int id)
+    public async Task<ActionResult<ContratacaoReadDTO>> GetContratacao(int id)
     {
         try
         {
@@ -44,7 +68,26 @@ public class ContratacoesController : ControllerBase
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            return contratacao == null ? NotFound("Contratação não encontrada.") : Ok(contratacao);
+            if (contratacao == null) return NotFound("Contratação não encontrada.");
+
+            var dto = new ContratacaoReadDTO
+            {
+                Id = contratacao.Id,
+                DataContratacao = contratacao.DataContratacao,
+                Status = contratacao.Status,
+                Cliente = new UsuarioReadDTO
+                {
+                    Id = contratacao.Cliente.Id,
+                    Nome = contratacao.Cliente.Nome
+                },
+                Servico = new ServicoReadDTO
+                {
+                    Id = contratacao.Servico.Id,
+                    Titulo = contratacao.Servico.Titulo
+                }
+            };
+
+            return Ok(dto);
         }
         catch (Exception)
         {
@@ -53,10 +96,18 @@ public class ContratacoesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Contratacao>> PostContratacao(Contratacao contratacao)
+    public async Task<ActionResult> PostContratacao(ContratacaoCreateDTO dto)
     {
         try
         {
+            var contratacao = new Contratacao
+            {
+                ClienteId = dto.ClienteId,
+                ServicoId = dto.ServicoId,
+                DataContratacao = dto.DataContratacao,
+                Status = dto.Status
+            };
+
             _context.Contratacoes.Add(contratacao);
             await _context.SaveChangesAsync();
 
@@ -69,12 +120,19 @@ public class ContratacoesController : ControllerBase
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> PutContratacao(int id, Contratacao contratacao)
+    public async Task<IActionResult> PutContratacao(int id, ContratacaoUpdateDTO dto)
     {
-        if (id != contratacao.Id)
+        if (id != dto.Id)
             return BadRequest("ID informado não corresponde à contratação.");
 
-        _context.Entry(contratacao).State = EntityState.Modified;
+        var contratacao = await _context.Contratacoes.FindAsync(id);
+        if (contratacao == null)
+            return NotFound("Contratação não encontrada.");
+
+        contratacao.ClienteId = dto.ClienteId;
+        contratacao.ServicoId = dto.ServicoId;
+        contratacao.DataContratacao = dto.DataContratacao;
+        contratacao.Status = dto.Status;
 
         try
         {
@@ -83,10 +141,40 @@ public class ContratacoesController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ContratacaoExiste(id))
-                return NotFound("Contratação não encontrada.");
-            else
-                return StatusCode(500, "Erro ao atualizar contratação.");
+            return StatusCode(500, "Erro ao atualizar contratação.");
+        }
+    }
+
+    [HttpPatch("{id:int:min(1)}")]
+    public async Task<IActionResult> PatchContratacao(int id, [FromBody] ContratacaoPatchDTO patchDto)
+    {
+        if (id != patchDto.Id)
+            return BadRequest("O ID informado não corresponde à contratação.");
+
+        var contratacao = await _context.Contratacoes.FindAsync(id);
+        if (contratacao == null)
+            return NotFound("Contratação não encontrada.");
+
+        if (patchDto.ClienteId.HasValue)
+            contratacao.ClienteId = patchDto.ClienteId.Value;
+
+        if (patchDto.ServicoId.HasValue)
+            contratacao.ServicoId = patchDto.ServicoId.Value;
+
+        if (patchDto.DataContratacao.HasValue)
+            contratacao.DataContratacao = patchDto.DataContratacao.Value;
+
+        if (patchDto.Status is not null)
+            contratacao.Status = patchDto.Status;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        catch (DbUpdateException)
+        {
+            return StatusCode(500, "Erro ao aplicar o patch na contratação.");
         }
     }
 
