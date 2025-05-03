@@ -1,4 +1,6 @@
 ﻿using APIWorkmate.Context;
+using APIWorkmate.DTOs.Categoria;
+using APIWorkmate.DTOs.Servico;
 using APIWorkmate.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -49,18 +51,66 @@ namespace APIWorkmate.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Categoria>> PostCategoria(Categoria categoria)
+        public async Task<ActionResult<CategoriaReadDTO>> PostCategoria(CategoriaCreateDTO categoriaDto)
         {
             try
             {
+                var nomeNormalizado = categoriaDto.Nome.Trim().ToLower();
+
+                var categoriaExistente = await _context.Categorias
+                    .AnyAsync(c => c.Nome.Trim().ToLower() == nomeNormalizado);
+
+                if (categoriaExistente)
+                    return Conflict("Já existe uma categoria com esse nome.");
+
+                var categoria = new Categoria
+                {
+                    Nome = categoriaDto.Nome.Trim()
+                };
+
                 _context.Categorias.Add(categoria);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetCategoria), new { id = categoria.Id, categoria });
+                var readDto = new CategoriaReadDTO
+                {
+                    Id = categoria.Id,
+                    Nome = categoria.Nome
+                };
+
+                return CreatedAtAction(nameof(GetCategoria), new { id = categoria.Id }, readDto);
             }
             catch (Exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+                return StatusCode(500, "Erro ao processar requisição.");
+            }
+        }
+
+        [HttpGet("servicos")]
+        public async Task<ActionResult<IEnumerable<CategoriaComServicosDTO>>> GetCategoriasComServicos()
+        {
+            try
+            {
+                var categorias = await _context.Categorias
+                    .Include(c => c.Servicos)
+                    .Select(c => new CategoriaComServicosDTO
+                    {
+                        Id = c.Id,
+                        Nome = c.Nome,
+                        Servicos = c.Servicos!.Select(s => new ServicoReadDTO
+                        {
+                            Id = s.Id,
+                            Titulo = s.Titulo,
+                            Descricao = s.Descricao,
+                            Preco = s.Preco
+                        }).ToList()
+                    })
+                    .ToListAsync();
+
+                return Ok(categorias);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao buscar categorias com serviços.");
             }
         }
 

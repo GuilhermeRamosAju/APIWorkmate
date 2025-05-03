@@ -1,4 +1,5 @@
 ﻿using APIWorkmate.Context;
+using APIWorkmate.DTOs.Categoria;
 using APIWorkmate.DTOs.Usuario;
 using APIWorkmate.Enums;
 using APIWorkmate.Models;
@@ -31,6 +32,78 @@ public class UsuariosController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
         }
     }
+
+    [HttpGet("prestadores")]
+    public async Task<ActionResult<IEnumerable<UsuarioReadDTO>>> GetUsuariosPrestadores()
+    {
+        try
+        {
+            var prestadores = await _context.Usuarios
+                .Where(u => u.Tipo == TipoUsuario.Prestador)
+                .Select(usuario => new UsuarioReadDTO
+                {
+                    Nome = usuario.Nome,
+                    Email = usuario.Email,
+                    Telefone = usuario.Telefone,
+                    Tipo = usuario.Tipo,
+                    FotoPerfil = usuario.FotoPerfil,
+                    Cidade = usuario.Cidade,
+                    Estado = usuario.Estado,
+                    Disponibilidade = usuario.Disponibilidade,
+                    Formacao = usuario.Formacao,
+                    Experiencia = usuario.Experiencia
+                })
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(prestadores);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
+        }
+    }
+
+    [HttpGet("{id:int:min(1)}/avaliacoes")]
+    public async Task<ActionResult<object>> GetAvaliacoesDoUsuario(int id)
+    {
+        try
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.Avaliacoes)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            var avaliacoes = usuario.Avaliacoes?.ToList() ?? new List<Avaliacao>();
+
+            double mediaNotas = avaliacoes.Any()
+                ? Math.Round(avaliacoes.Average(a => a.Nota), 2)
+                : 0.0;
+
+            return Ok(new
+            {
+                UsuarioId = id,
+                MediaNota = mediaNotas,
+                Avaliacoes = avaliacoes.Select(a => new
+                {
+                    a.Id,
+                    a.Nota,
+                    a.Comentario,
+                    a.DataAvaliacao,
+                    a.ServicoId
+                })
+            });
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao processar a requisição.");
+        }
+    }
+
 
     [HttpGet("{id:int:min(1)}")]
     public async Task<ActionResult<UsuarioReadDTO>> GetUsuario(int id)
@@ -181,6 +254,72 @@ public class UsuariosController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao processar sua requisição.");
         }
     }
+
+    [HttpGet("{id}/especialidades")]
+    public async Task<ActionResult<IEnumerable<CategoriaReadDTO>>> GetEspecialidades(int id)
+    {
+        try
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.Especialidades)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (usuario == null) return NotFound("Usuário não encontrado.");
+
+            var especialidades = usuario.Especialidades?
+                .Select(c => new CategoriaReadDTO
+                {
+                    Id = c.Id,
+                    Nome = c.Nome
+                })
+                .ToList();
+
+            return Ok(especialidades);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao processar requisição.");
+        }
+    }
+
+    [HttpPost("associar-especialidades")]
+    public async Task<IActionResult> AssociarEspecialidades([FromBody] AssociarEspecialidadesDTO dto)
+    {
+        try
+        {
+            var usuario = await _context.Usuarios
+                .Include(u => u.Especialidades)
+                .FirstOrDefaultAsync(u => u.Id == dto.UsuarioId);
+
+            if (usuario == null)
+                return NotFound("Usuário não encontrado.");
+
+            var categorias = await _context.Categorias
+                .Where(c => dto.CategoriasIds.Contains(c.Id))
+                .ToListAsync();
+
+            if (!categorias.Any())
+                return BadRequest("Nenhuma categoria válida fornecida.");
+
+            foreach (var categoria in categorias)
+            {
+                if (!usuario.Especialidades!.Any(c => c.Id == categoria.Id))
+                {
+                    usuario.Especialidades.Add(categoria);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Categorias associadas com sucesso.");
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "Erro ao associar especialidades.");
+        }
+    }
+
 
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> UpdateUsuario(int id, Usuario usuario)

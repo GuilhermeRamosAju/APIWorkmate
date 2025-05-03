@@ -34,5 +34,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Usuario>()
             .Property(u => u.Tipo)
             .HasConversion<string>();
+
+        modelBuilder.Entity<Usuario>()
+        .HasMany(u => u.Especialidades)
+        .WithMany()
+        .UsingEntity(j => j.ToTable("UsuarioCategorias"));
     }
 }
