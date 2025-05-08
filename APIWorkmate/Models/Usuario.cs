@@ -45,7 +45,7 @@ public class Usuario
     public string? Experiencia { get; set; }
 
     [JsonIgnore]
-    public ICollection<Categoria>? Especialidades { get; set; }
+    public ICollection<Subcategoria>? Especialidades { get; set; }
     [JsonIgnore]
     public ICollection<Servico>? Servicos { get; set; }
     [JsonIgnore]

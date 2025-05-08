@@ -27,9 +27,10 @@ public class Servico
     public int PrestadorId { get; set; }
     public Usuario? Prestador { get; set; }
 
-    [ForeignKey("Categoria")]
-    public int CategoriaId { get; set; }
-    public Categoria? Categoria { get; set; }
+    [ForeignKey("Subcategoria")]
+    public int SubcategoriaId { get; set; }
+
+    public Subcategoria? Subcategoria { get; set; }
 
     [JsonIgnore]
     public ICollection<Contratacao>? Contratacoes { get; set; }

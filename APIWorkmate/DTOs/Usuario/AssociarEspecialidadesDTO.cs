@@ -3,5 +3,5 @@
 public class AssociarEspecialidadesDTO
 {
     public int UsuarioId { get; set; }
-    public List<int> CategoriasIds { get; set; } = new();
+    public List<int> SubcategoriasIds { get; set; } = [];
 }

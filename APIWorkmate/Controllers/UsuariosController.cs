@@ -153,7 +153,7 @@ public class UsuariosController : ControllerBase
         {
             var query = _context.Usuarios
                 .Include(u => u.Servicos)
-                    .ThenInclude(s => s.Categoria)
+                    .ThenInclude(s => s.Subcategoria)
                 .Include(u => u.Servicos)
                     .ThenInclude(s => s.Avaliacoes)
                 .AsQueryable();
@@ -172,7 +172,7 @@ public class UsuariosController : ControllerBase
             {
                 query = query.Where(u =>
                     u.Servicos != null &&
-                    u.Servicos.Any(s => s.CategoriaId == categoriaId.Value)
+                    u.Servicos.Any(s => s.SubcategoriaId == categoriaId.Value)
                 );
             }
 
@@ -295,30 +295,31 @@ public class UsuariosController : ControllerBase
             if (usuario == null)
                 return NotFound("Usuário não encontrado.");
 
-            var categorias = await _context.Categorias
-                .Where(c => dto.CategoriasIds.Contains(c.Id))
+            var subcategorias = await _context.Subcategorias
+                .Where(sc => dto.SubcategoriasIds.Contains(sc.Id))
                 .ToListAsync();
 
-            if (!categorias.Any())
-                return BadRequest("Nenhuma categoria válida fornecida.");
+            if (!subcategorias.Any())
+                return BadRequest("Nenhuma subcategoria válida fornecida.");
 
-            foreach (var categoria in categorias)
+            foreach (var subcategoria in subcategorias)
             {
-                if (!usuario.Especialidades!.Any(c => c.Id == categoria.Id))
+                if (!usuario.Especialidades!.Any(es => es.Id == subcategoria.Id))
                 {
-                    usuario.Especialidades.Add(categoria);
+                    usuario.Especialidades.Add(subcategoria);
                 }
             }
 
             await _context.SaveChangesAsync();
 
-            return Ok("Categorias associadas com sucesso.");
+            return Ok("Subcategorias associadas com sucesso.");
         }
         catch (Exception)
         {
             return StatusCode(500, "Erro ao associar especialidades.");
         }
     }
+
 
 
     [HttpPut("{id:int:min(1)}")]

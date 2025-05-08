@@ -13,4 +13,7 @@ public class Categoria
 
     [JsonIgnore]
     public ICollection<Servico>? Servicos { get; set; }
+
+    [JsonIgnore]
+    public ICollection<Subcategoria>? Subcategorias { get; set; }
 }

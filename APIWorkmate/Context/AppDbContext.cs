@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<Mensagem> Mensagens { get; set; }
     public DbSet<Servico> Servicos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Subcategoria> Subcategorias { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,8 +37,8 @@ public class AppDbContext : DbContext
             .HasConversion<string>();
 
         modelBuilder.Entity<Usuario>()
-        .HasMany(u => u.Especialidades)
-        .WithMany()
-        .UsingEntity(j => j.ToTable("UsuarioCategorias"));
+            .HasMany(u => u.Especialidades)
+            .WithMany(s => s.Usuarios)
+            .UsingEntity(j => j.ToTable("UsuarioSubcategorias"));
     }
 }

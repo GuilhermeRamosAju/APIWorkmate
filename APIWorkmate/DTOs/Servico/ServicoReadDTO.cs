@@ -5,6 +5,6 @@ public class ServicoReadDTO
     public string Titulo { get; set; } = null!;
     public string? Descricao { get; set; }
     public decimal Preco { get; set; }
-    public string CategoriaNome { get; set; } = null!;
+    public string SubcategoriaNome { get; set; } = null!;
     public string PrestadorNome { get; set; } = null!;
 }
