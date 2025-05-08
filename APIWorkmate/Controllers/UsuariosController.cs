@@ -142,20 +142,21 @@ public class UsuariosController : ControllerBase
     }
 
     [HttpGet("filtrar")]
-    public async Task<ActionResult<IEnumerable<Usuario>>> FiltrarUsuarios(
-        [FromQuery] string? nome,
-        [FromQuery] string? localizacao,
-        [FromQuery] int? categoriaId,
-        [FromQuery] double? notaMinima
-    )
+    public async Task<ActionResult> FiltrarUsuarios(
+       [FromQuery] string? nome,
+       [FromQuery] string? localizacao,
+       [FromQuery] int? subcategoriaId,
+       [FromQuery] double? notaMinima
+   )
     {
         try
         {
-            var query = _context.Usuarios
-                .Include(u => u.Servicos)
+            var query = _context.Usuarios!
+                .Include(u => u.Servicos!)
                     .ThenInclude(s => s.Subcategoria)
-                .Include(u => u.Servicos)
+                .Include(u => u.Servicos!)
                     .ThenInclude(s => s.Avaliacoes)
+                .Include(u => u.Especialidades)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(nome))
@@ -165,29 +166,67 @@ public class UsuariosController : ControllerBase
 
             if (!string.IsNullOrWhiteSpace(localizacao))
             {
-                query = query.Where(u => u.Estado.Contains(localizacao));
+                query = query.Where(u => u.Estado.Contains(localizacao) || u.Cidade.Contains(localizacao));
             }
 
-            if (categoriaId.HasValue)
+            if (subcategoriaId.HasValue)
             {
-                query = query.Where(u =>
-                    u.Servicos != null &&
-                    u.Servicos.Any(s => s.SubcategoriaId == categoriaId.Value)
-                );
-            }
-
-            if (notaMinima.HasValue)
-            {
-                query = query.Where(u =>
-                    u.Servicos != null &&
-                    u.Servicos.Any(s => s.Avaliacoes != null && s.Avaliacoes.Any()) &&
-                    u.Servicos.SelectMany(s => s.Avaliacoes!).Average(a => a.Nota) >= notaMinima.Value
-                );
+                query = query.Where(u => u.Especialidades!.Any(sc => sc.Id == subcategoriaId.Value));
             }
 
             var usuariosFiltrados = await query
                 .AsNoTracking()
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Nome,
+                    u.Email,
+                    u.FotoPerfil,
+                    u.Estado,
+                    u.Cidade,
+                    u.Disponibilidade,
+                    u.Formacao,
+                    u.Experiencia,
+                    Especialidades = u.Especialidades!.Select(sc => new
+                    {
+                        sc.Id,
+                        sc.Nome,
+                        Categoria = sc.Categoria != null ? new
+                        {
+                            sc.Categoria.Id,
+                            sc.Categoria.Nome
+                        } : null
+                    }),
+                    Servicos = u.Servicos!.Select(s => new
+                    {
+                        s.Id,
+                        s.Titulo,
+                        Subcategoria = s.Subcategoria != null ? s.Subcategoria.Nome : null,
+                        Avaliacoes = s.Avaliacoes!.Select(a => new
+                        {
+                            a.Id,
+                            a.Nota,
+                            a.Comentario
+                        })
+                    }),
+                    MediaNota = u.Servicos!
+                        .Where(s => s.Avaliacoes != null && s.Avaliacoes.Any())
+                        .SelectMany(s => s.Avaliacoes!)
+                        .Any()
+                            ? Math.Round(u.Servicos!
+                                .Where(s => s.Avaliacoes != null)
+                                .SelectMany(s => s.Avaliacoes!)
+                                .Average(a => a.Nota), 2)
+                            : 0.0
+                })
                 .ToListAsync();
+
+            if (notaMinima.HasValue)
+            {
+                usuariosFiltrados = usuariosFiltrados
+                    .Where(u => u.MediaNota >= notaMinima.Value)
+                    .ToList();
+            }
 
             return Ok(usuariosFiltrados);
         }
