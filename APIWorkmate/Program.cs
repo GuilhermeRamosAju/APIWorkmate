@@ -1,6 +1,12 @@
 using APIWorkmate.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
+using APIWorkmate.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +30,19 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddIdentity<Usuario, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+
 string mySqlConnection = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(mySqlConnection,
     ServerVersion.AutoDetect(mySqlConnection)));
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 
 var app = builder.Build();
 

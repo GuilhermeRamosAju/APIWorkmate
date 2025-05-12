@@ -2,6 +2,6 @@
 
 public class AssociarEspecialidadesDTO
 {
-    public int UsuarioId { get; set; }
-    public List<int> SubcategoriasIds { get; set; } = [];
+    public Guid UsuarioId { get; set; }
+    public List<Guid> SubcategoriasIds { get; set; } = [];
 }

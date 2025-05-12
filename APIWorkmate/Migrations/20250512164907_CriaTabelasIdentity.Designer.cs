@@ -12,29 +12,27 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIWorkmate.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250508001326_AjustarRelacionamentoUsuarioSubcategoria")]
-    partial class AjustarRelacionamentoUsuarioSubcategoria
+    [Migration("20250512164907_CriaTabelasIdentity")]
+    partial class CriaTabelasIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.13")
+                .HasAnnotation("ProductVersion", "8.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("APIWorkmate.Models.Avaliacao", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ClienteId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Comentario")
                         .HasMaxLength(1000)
@@ -46,8 +44,8 @@ namespace APIWorkmate.Migrations
                     b.Property<int>("Nota")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServicoId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ServicoId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -60,11 +58,9 @@ namespace APIWorkmate.Migrations
 
             modelBuilder.Entity("APIWorkmate.Models.Categoria", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -78,20 +74,18 @@ namespace APIWorkmate.Migrations
 
             modelBuilder.Entity("APIWorkmate.Models.Contratacao", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ClienteId")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("DataContratacao")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("ServicoId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ServicoId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -109,23 +103,21 @@ namespace APIWorkmate.Migrations
 
             modelBuilder.Entity("APIWorkmate.Models.Mensagem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("DataEnvio")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("DestinatarioId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("DestinatarioId")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("Lida")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("RemetenteId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("RemetenteId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Texto")
                         .IsRequired()
@@ -143,14 +135,12 @@ namespace APIWorkmate.Migrations
 
             modelBuilder.Entity("APIWorkmate.Models.Servico", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CategoriaId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("CategoriaId")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("datetime(6)");
@@ -167,11 +157,11 @@ namespace APIWorkmate.Migrations
                     b.Property<decimal>("Preco")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<int>("PrestadorId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("PrestadorId")
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("SubcategoriaId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("SubcategoriaId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -191,14 +181,12 @@ namespace APIWorkmate.Migrations
 
             modelBuilder.Entity("APIWorkmate.Models.Subcategoria", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoriaId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoriaId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -214,15 +202,20 @@ namespace APIWorkmate.Migrations
 
             modelBuilder.Entity("APIWorkmate.Models.Usuario", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Cidade")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("DataCadastro")
                         .HasColumnType("datetime(6)");
@@ -233,8 +226,11 @@ namespace APIWorkmate.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Estado")
                         .HasMaxLength(2)
@@ -252,10 +248,36 @@ namespace APIWorkmate.Migrations
                         .HasMaxLength(2083)
                         .HasColumnType("varchar(2083)");
 
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("SenhaHash")
                         .IsRequired()
@@ -270,22 +292,166 @@ namespace APIWorkmate.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Usuarios");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SubcategoriaUsuario", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
-                    b.Property<int>("EspecialidadesId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("UsuariosId")
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.HasKey("EspecialidadesId", "UsuariosId");
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("UsuariosId");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("UsuarioSubcategorias", b =>
+                {
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("SubcategoriaId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("UsuarioId", "SubcategoriaId");
+
+                    b.HasIndex("SubcategoriaId");
 
                     b.ToTable("UsuarioSubcategorias", (string)null);
                 });
@@ -381,17 +547,68 @@ namespace APIWorkmate.Migrations
                     b.Navigation("Categoria");
                 });
 
-            modelBuilder.Entity("SubcategoriaUsuario", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("APIWorkmate.Models.Subcategoria", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
                         .WithMany()
-                        .HasForeignKey("EspecialidadesId")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
+                {
+                    b.HasOne("APIWorkmate.Models.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
+                {
+                    b.HasOne("APIWorkmate.Models.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("APIWorkmate.Models.Usuario", null)
                         .WithMany()
-                        .HasForeignKey("UsuariosId")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
+                {
+                    b.HasOne("APIWorkmate.Models.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UsuarioSubcategorias", b =>
+                {
+                    b.HasOne("APIWorkmate.Models.Subcategoria", null)
+                        .WithMany()
+                        .HasForeignKey("SubcategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("APIWorkmate.Models.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

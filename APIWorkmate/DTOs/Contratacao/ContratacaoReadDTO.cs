@@ -4,7 +4,7 @@ namespace APIWorkmate.DTOs.Contratacao;
 
 public class ContratacaoReadDTO
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public DateTime DataContratacao { get; set; }
     public string? Status { get; set; }
 

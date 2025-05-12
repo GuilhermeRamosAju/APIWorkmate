@@ -2,7 +2,6 @@
 using APIWorkmate.DTOs.Categoria;
 using APIWorkmate.DTOs.Servico;
 using APIWorkmate.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,8 +31,8 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        [HttpGet("{id:int:min(1)}")]
-        public async Task<ActionResult<Categoria>> GetCategoria(int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<ActionResult<Categoria>> GetCategoria(Guid id)
         {
             try
             {
@@ -114,8 +113,8 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        [HttpPut("{id:int:min(1)}")]
-        public async Task<IActionResult> PutCategoria(int id, Categoria categoria)
+        [HttpPut("{id:Guid}")]
+        public async Task<IActionResult> PutCategoria(Guid id, Categoria categoria)
         {
             try
             {
@@ -132,8 +131,8 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        [HttpDelete("{id:int:min(1)}")]
-        public async Task<IActionResult> DeleteAvaliacao(int id)
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> DeleteAvaliacao(Guid id)
         {
             try
             {
@@ -151,7 +150,7 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        private bool CategoriaExiste(int id)
+        private bool CategoriaExiste(Guid id)
         {
             return _context.Categorias.Any(s => s.Id == id);
         }

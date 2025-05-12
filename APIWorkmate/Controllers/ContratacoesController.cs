@@ -1,10 +1,8 @@
 ﻿using APIWorkmate.Context;
-using APIWorkmate.DTOs;
 using APIWorkmate.DTOs.Contratacao;
 using APIWorkmate.DTOs.Servico;
 using APIWorkmate.DTOs.Usuario;
 using APIWorkmate.Models;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,8 +55,8 @@ public class ContratacoesController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<ActionResult<ContratacaoReadDTO>> GetContratacao(int id)
+    [HttpGet("{id:Guid}")]
+    public async Task<ActionResult<ContratacaoReadDTO>> GetContratacao(Guid id)
     {
         try
         {
@@ -119,8 +117,8 @@ public class ContratacoesController : ControllerBase
         }
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> PutContratacao(int id, ContratacaoUpdateDTO dto)
+    [HttpPut("{id:Guid}")]
+    public async Task<IActionResult> PutContratacao(Guid id, ContratacaoUpdateDTO dto)
     {
         if (id != dto.Id)
             return BadRequest("ID informado não corresponde à contratação.");
@@ -145,8 +143,8 @@ public class ContratacoesController : ControllerBase
         }
     }
 
-    [HttpPatch("{id:int:min(1)}")]
-    public async Task<IActionResult> PatchContratacao(int id, [FromBody] ContratacaoPatchDTO patchDto)
+    [HttpPatch("{id:Guid}")]
+    public async Task<IActionResult> PatchContratacao(Guid id, [FromBody] ContratacaoPatchDTO patchDto)
     {
         if (id != patchDto.Id)
             return BadRequest("O ID informado não corresponde à contratação.");
@@ -178,8 +176,8 @@ public class ContratacoesController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> DeleteContratacao(int id)
+    [HttpDelete("{id:Guid}")]
+    public async Task<IActionResult> DeleteContratacao(Guid id)
     {
         try
         {
@@ -198,7 +196,7 @@ public class ContratacoesController : ControllerBase
         }
     }
 
-    private bool ContratacaoExiste(int id)
+    private bool ContratacaoExiste(Guid id)
     {
         return _context.Contratacoes.Any(c => c.Id == id);
     }

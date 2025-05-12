@@ -33,8 +33,8 @@ public class MensagensController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<ActionResult<Mensagem>> GetMensagem(int id)
+    [HttpGet("{id:Guid}")]
+    public async Task<ActionResult<Mensagem>> GetMensagem(Guid id)
     {
         try
         {
@@ -68,8 +68,8 @@ public class MensagensController : ControllerBase
         }
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> PutMensagem(int id, Mensagem mensagem)
+    [HttpPut("{id:Guid}")]
+    public async Task<IActionResult> PutMensagem(Guid id, Mensagem mensagem)
     {
         if (id != mensagem.Id)
             return BadRequest("ID informado não corresponde à mensagem.");
@@ -90,8 +90,8 @@ public class MensagensController : ControllerBase
         }
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> DeleteMensagem(int id)
+    [HttpDelete("{id:Guid}")]
+    public async Task<IActionResult> DeleteMensagem(Guid id)
     {
         try
         {
@@ -110,7 +110,7 @@ public class MensagensController : ControllerBase
         }
     }
 
-    private bool MensagemExiste(int id)
+    private bool MensagemExiste(Guid id)
     {
         return _context.Mensagens.Any(m => m.Id == id);
     }

@@ -7,7 +7,7 @@ namespace APIWorkmate.Models;
 public class Mensagem
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required, StringLength(1000)]
     public string Texto { get; set; } = string.Empty;
@@ -17,11 +17,11 @@ public class Mensagem
     public bool Lida { get; set; } = false;
 
     [ForeignKey("Remetente")]
-    public int RemetenteId { get; set; }
+    public Guid RemetenteId { get; set; }
     public Usuario? Remetente { get; set; }
 
     [ForeignKey("Destinatario")]
-    public int DestinatarioId { get; set; }
+    public Guid DestinatarioId { get; set; }
 
     [JsonIgnore]
     public Usuario? Destinatario { get; set; }

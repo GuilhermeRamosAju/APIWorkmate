@@ -7,7 +7,7 @@ namespace APIWorkmate.Models;
 public class Avaliacao
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
     [Range(1, 5)]
@@ -19,11 +19,11 @@ public class Avaliacao
     public DateTime DataAvaliacao { get; set; } = DateTime.UtcNow;
 
     [ForeignKey("Servico")]
-    public int ServicoId { get; set; }
+    public Guid ServicoId { get; set; }
     public Servico? Servico { get; set; }
 
     [ForeignKey("Cliente")]
-    public int ClienteId { get; set; }
+    public Guid ClienteId { get; set; }
 
     [JsonIgnore]
     public Usuario? Cliente { get; set; }

@@ -64,8 +64,8 @@ public class UsuariosController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int:min(1)}/avaliacoes")]
-    public async Task<ActionResult<object>> GetAvaliacoesDoUsuario(int id)
+    [HttpGet("{id:Guid}/avaliacoes")]
+    public async Task<ActionResult<object>> GetAvaliacoesDoUsuario(Guid id)
     {
         try
         {
@@ -104,9 +104,8 @@ public class UsuariosController : ControllerBase
         }
     }
 
-
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<ActionResult<UsuarioReadDTO>> GetUsuario(int id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<UsuarioReadDTO>> GetUsuario(Guid id)
     {
         try
         {
@@ -145,7 +144,7 @@ public class UsuariosController : ControllerBase
     public async Task<ActionResult> FiltrarUsuarios(
        [FromQuery] string? nome,
        [FromQuery] string? localizacao,
-       [FromQuery] int? subcategoriaId,
+       [FromQuery] Guid? subcategoriaId,
        [FromQuery] double? notaMinima
    )
     {
@@ -295,7 +294,7 @@ public class UsuariosController : ControllerBase
     }
 
     [HttpGet("{id}/especialidades")]
-    public async Task<ActionResult<IEnumerable<CategoriaReadDTO>>> GetEspecialidades(int id)
+    public async Task<ActionResult<IEnumerable<CategoriaReadDTO>>> GetEspecialidades(Guid id)
     {
         try
         {
@@ -359,10 +358,8 @@ public class UsuariosController : ControllerBase
         }
     }
 
-
-
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> UpdateUsuario(int id, Usuario usuario)
+    [HttpPut("{id:Guid}")]
+    public async Task<IActionResult> UpdateUsuario(Guid id, Usuario usuario)
     {
 
         if (id != usuario.Id)
@@ -391,8 +388,8 @@ public class UsuariosController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> DeleteUsuario(int id)
+    [HttpDelete("{id:Guid}")]
+    public async Task<IActionResult> DeleteUsuario(Guid id)
     {
         try
         {
@@ -412,8 +409,8 @@ public class UsuariosController : ControllerBase
         }
     }
 
-    [HttpPatch("{id:int:min(1)}")]
-    public async Task<IActionResult> PatchUsuario(int id, [FromBody] UsuarioUpdateDTO usuarioDto)
+    [HttpPatch("{id:Guid}")]
+    public async Task<IActionResult> PatchUsuario(Guid id, [FromBody] UsuarioUpdateDTO usuarioDto)
     {
         try
         {
@@ -468,9 +465,8 @@ public class UsuariosController : ControllerBase
         }
     }
 
-
-    [HttpGet("{id:int:min(1)}/servicos")]
-    public async Task<ActionResult<IEnumerable<Servico>>> GetServicosPorUsuario(int id)
+    [HttpGet("{id:Guid}/servicos")]
+    public async Task<ActionResult<IEnumerable<Servico>>> GetServicosPorUsuario(Guid id)
     {
         try
         {
@@ -491,8 +487,7 @@ public class UsuariosController : ControllerBase
         }
     }
 
-
-    private bool UsuarioExiste(int id)
+    private bool UsuarioExiste(Guid id)
     {
         return _context.Usuarios.Any(u => u.Id == id);
     }

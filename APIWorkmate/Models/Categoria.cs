@@ -6,7 +6,7 @@ namespace APIWorkmate.Models;
 public class Categoria
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required, StringLength(100)]
     public string Nome { get; set; } = string.Empty;

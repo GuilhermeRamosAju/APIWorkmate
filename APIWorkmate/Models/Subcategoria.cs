@@ -7,13 +7,13 @@ namespace APIWorkmate.Models;
 public class Subcategoria
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required, StringLength(100)]
     public string Nome { get; set; } = string.Empty;
 
     [ForeignKey("Categoria")]
-    public int CategoriaId { get; set; }
+    public Guid CategoriaId { get; set; }
 
     public Categoria? Categoria { get; set; }
 

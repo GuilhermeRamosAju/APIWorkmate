@@ -46,8 +46,8 @@ public class ServicosController : ControllerBase
         }
     }
 
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<ActionResult<ServicoReadDTO>> GetServico(int id)
+    [HttpGet("{id:Guid}")]
+    public async Task<ActionResult<ServicoReadDTO>> GetServico(Guid id)
     {
         try
         {
@@ -117,8 +117,8 @@ public class ServicosController : ControllerBase
         }
     }
 
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> UpdateServico(int id, ServicoUpdateDTO servicoDTO)
+    [HttpPut("{id:Guid}")]
+    public async Task<IActionResult> UpdateServico(Guid id, ServicoUpdateDTO servicoDTO)
     {
         if (id != servicoDTO.Id)
             return BadRequest("ID informado não corresponde ao serviço.");
@@ -152,8 +152,8 @@ public class ServicosController : ControllerBase
         }
     }
 
-    [HttpPatch("{id:int:min(1)}")]
-    public async Task<IActionResult> PatchServico(int id, [FromBody] ServicoUpdateDTO patchDto)
+    [HttpPatch("{id:Guid}")]
+    public async Task<IActionResult> PatchServico(Guid id, [FromBody] ServicoUpdateDTO patchDto)
     {
         if (id != patchDto.Id)
             return BadRequest("O ID informado não corresponde ao serviço.");
@@ -188,8 +188,8 @@ public class ServicosController : ControllerBase
     }
 
 
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> DeleteServico(int id)
+    [HttpDelete("{id:Guid}")]
+    public async Task<IActionResult> DeleteServico(Guid id)
     {
         try
         {

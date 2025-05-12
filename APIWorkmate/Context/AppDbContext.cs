@@ -1,14 +1,14 @@
 ﻿using APIWorkmate.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 
 namespace APIWorkmate.Context;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<Usuario, IdentityRole<Guid>, Guid>
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Avaliacao> Avaliacoes { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
@@ -39,6 +39,16 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Usuario>()
             .HasMany(u => u.Especialidades)
             .WithMany(s => s.Usuarios)
-            .UsingEntity(j => j.ToTable("UsuarioSubcategorias"));
+            .UsingEntity<Dictionary<string, object>>(
+                "UsuarioSubcategorias",
+                j => j.HasOne<Subcategoria>().WithMany().HasForeignKey("SubcategoriaId").HasPrincipalKey("Id"),
+                j => j.HasOne<Usuario>().WithMany().HasForeignKey("UsuarioId").HasPrincipalKey("Id"),
+                j =>
+                {
+                    j.HasKey("UsuarioId", "SubcategoriaId");
+                    j.ToTable("UsuarioSubcategorias");
+                });
+
+        base.OnModelCreating(modelBuilder);
     }
 }

@@ -12,8 +12,8 @@ public class AvaliacaoCreateDTO
     public string? Comentario { get; set; }
 
     [Required(ErrorMessage = "O campo ServicoId é obrigatório.")]
-    public int ServicoId { get; set; }
+    public Guid ServicoId { get; set; }
 
     [Required(ErrorMessage = "O campo ClienteId é obrigatório.")]
-    public int ClienteId { get; set; }
+    public Guid ClienteId { get; set; }
 }

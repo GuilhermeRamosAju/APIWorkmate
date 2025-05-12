@@ -1,13 +1,14 @@
 ﻿using APIWorkmate.Enums;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace APIWorkmate.Models;
 
-public class Usuario
+public class Usuario : IdentityUser<Guid>
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required, StringLength(100)]
     public string Nome { get; set; } = string.Empty;

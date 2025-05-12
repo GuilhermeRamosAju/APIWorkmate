@@ -53,7 +53,7 @@ public class SubcategoriasController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ReadSubcategoriaDTO>> GetById(int id)
+    public async Task<ActionResult<ReadSubcategoriaDTO>> GetById(Guid id)
     {
         var subcategoria = await _context.Subcategorias
             .Include(sc => sc.Categoria)
@@ -73,7 +73,7 @@ public class SubcategoriasController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var subcategoria = await _context.Subcategorias.FindAsync(id);
         if (subcategoria == null)

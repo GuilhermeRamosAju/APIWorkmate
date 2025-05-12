@@ -7,7 +7,7 @@ namespace APIWorkmate.Models;
 public class Servico
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required, StringLength(100)]
     public string Titulo { get; set; } = string.Empty;
@@ -24,11 +24,11 @@ public class Servico
     public DateTime DataCriacao { get; set; } = DateTime.UtcNow;
 
     [ForeignKey("Prestador")]
-    public int PrestadorId { get; set; }
+    public Guid PrestadorId { get; set; }
     public Usuario? Prestador { get; set; }
 
     [ForeignKey("Subcategoria")]
-    public int SubcategoriaId { get; set; }
+    public Guid SubcategoriaId { get; set; }
 
     public Subcategoria? Subcategoria { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using APIWorkmate.Context;
 using APIWorkmate.DTOs.Avaliacao;
 using APIWorkmate.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,8 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        [HttpGet("{id:int:min(1)}")]
-        public async Task<ActionResult<AvaliacaoReadDTO>> GetAvaliacao(int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<ActionResult<AvaliacaoReadDTO>> GetAvaliacao(Guid id)
         {
             try
             {
@@ -51,8 +52,17 @@ namespace APIWorkmate.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<AvaliacaoReadDTO>> PostAvaliacao([FromBody] AvaliacaoCreateDTO dto)
         {
+            var servico = await _context.Servicos.FindAsync(dto.ServicoId);
+            if (servico == null)
+                return NotFound($"Serviço com ID {dto.ServicoId} não encontrado.");
+
+            var cliente = await _context.Usuarios.FindAsync(dto.ClienteId);
+            if (cliente == null)
+                return NotFound($"Cliente com ID {dto.ClienteId} não encontrado.");
+
             var avaliacao = new Avaliacao
             {
                 Nota = dto.Nota,
@@ -70,14 +80,14 @@ namespace APIWorkmate.Controllers
                 Nota = avaliacao.Nota,
                 Comentario = avaliacao.Comentario,
                 DataAvaliacao = avaliacao.DataAvaliacao,
-                NomeCliente = avaliacao.Cliente.Nome
+                NomeCliente = cliente.Nome
             };
 
             return CreatedAtAction(nameof(GetAvaliacao), new { id = avaliacao.Id }, readDto);
         }
 
-        [HttpPut("{id:int:min(1)}")]
-        public async Task<IActionResult> PutAvaliacao(int id, Avaliacao avaliacao)
+        [HttpPut("{id:Guid}")]
+        public async Task<IActionResult> PutAvaliacao(Guid id, Avaliacao avaliacao)
         {
             try
             {
@@ -94,8 +104,8 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        [HttpDelete("{id:int:min(1)}")]
-        public async Task<IActionResult> DeleteAvaliacao(int id)
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> DeleteAvaliacao(Guid id)
         {
             try
             {
@@ -113,7 +123,7 @@ namespace APIWorkmate.Controllers
             }
         }
 
-        private bool AvaliacaoExiste(int id)
+        private bool AvaliacaoExiste(Guid id)
         {
             return _context.Avaliacoes.Any(a => a.Id == id);
         }

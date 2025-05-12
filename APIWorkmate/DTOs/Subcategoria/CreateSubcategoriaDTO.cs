@@ -8,5 +8,5 @@ public class CreateSubcategoriaDTO
     public string Nome { get; set; } = string.Empty;
 
     [Required]
-    public int CategoriaId { get; set; }
+    public Guid CategoriaId { get; set; }
 }
