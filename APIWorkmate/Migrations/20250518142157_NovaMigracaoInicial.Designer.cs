@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIWorkmate.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250512164907_CriaTabelasIdentity")]
-    partial class CriaTabelasIdentity
+    [Migration("20250518142157_NovaMigracaoInicial")]
+    partial class NovaMigracaoInicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,6 +275,12 @@ namespace APIWorkmate.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("RefreshTokenExpireTime")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("longtext");

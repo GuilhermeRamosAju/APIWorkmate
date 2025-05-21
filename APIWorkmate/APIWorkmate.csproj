@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Mensagem\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

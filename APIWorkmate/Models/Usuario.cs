@@ -8,13 +8,13 @@ namespace APIWorkmate.Models;
 public class Usuario : IdentityUser<Guid>
 {
     [Key]
-    public Guid Id { get; set; }
+    public override Guid Id { get; set; }
 
     [Required, StringLength(100)]
     public string Nome { get; set; } = string.Empty;
 
     [Required, EmailAddress, StringLength(255)]
-    public string Email { get; set; } = string.Empty;
+    public override string Email { get; set; } = string.Empty;
 
     [Required, StringLength(255)]
     public string SenhaHash { get; set; } = string.Empty;
@@ -44,6 +44,9 @@ public class Usuario : IdentityUser<Guid>
 
     [StringLength(255)]
     public string? Experiencia { get; set; }
+
+    public string? RefreshToken { get; set; }
+    public DateTime RefreshTokenExpireTime { get; set; }
 
     [JsonIgnore]
     public ICollection<Subcategoria>? Especialidades { get; set; }
