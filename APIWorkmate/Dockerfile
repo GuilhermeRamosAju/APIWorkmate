@@ -1,19 +1,20 @@
-# Etapa 1: build
+# Etapa 1 - Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
 WORKDIR /app
 
-COPY *.csproj ./
+# Copia apenas o csproj primeiro para restaurar as dependências
+COPY APIWorkmate.csproj ./
 RUN dotnet restore
 
+# Copia o restante do código
 COPY . ./
 RUN dotnet publish -c Release -o out
 
-# Etapa 2: runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# Etapa 2 - Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
 WORKDIR /app
 COPY --from=build /app/out .
-
-ENV ASPNETCORE_URLS=http://+:80
-EXPOSE 80
 
 ENTRYPOINT ["dotnet", "APIWorkmate.dll"]
