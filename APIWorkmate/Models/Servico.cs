@@ -16,7 +16,7 @@ public class Servico
     public string Descricao { get; set; } = string.Empty;
 
     [Required]
-    public decimal Preco { get; set; }
+    public decimal? Preco { get; set; }
 
     [StringLength(150)]
     public string? Localizacao { get; set; }

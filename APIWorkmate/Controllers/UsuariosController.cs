@@ -156,6 +156,7 @@ public class UsuariosController : ControllerBase
                 .Include(u => u.Servicos!)
                     .ThenInclude(s => s.Avaliacoes)
                 .Include(u => u.Especialidades)
+                .Where(u => u.Tipo == TipoUsuario.Prestador)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(nome))

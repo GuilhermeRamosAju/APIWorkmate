@@ -1,7 +1,7 @@
 ﻿using APIWorkmate.DTOs;
+using APIWorkmate.Enums;
 using APIWorkmate.Interfaces;
 using APIWorkmate.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,20 +11,11 @@ namespace APIWorkmate.Controllers.Auth;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController(ITokenService tokenService, UserManager<Usuario> userManager, IConfiguration configuration) : ControllerBase
 {
-    private readonly ITokenService _tokenService;
-    private readonly UserManager<Usuario> _userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-    private readonly IConfiguration _configuration;
-
-    public AuthController(ITokenService tokenService, UserManager<Usuario> userManager, RoleManager<IdentityRole<Guid>> roleManager, IConfiguration configuration)
-    {
-        _tokenService = tokenService;
-        _userManager = userManager;
-        _roleManager = roleManager;
-        _configuration = configuration;
-    }
+    private readonly ITokenService _tokenService = tokenService;
+    private readonly UserManager<Usuario> _userManager = userManager;
+    private readonly IConfiguration _configuration = configuration;
 
     [HttpPost]
     [Route("login")]
@@ -38,9 +29,9 @@ public class AuthController : ControllerBase
 
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new(ClaimTypes.Name, user.UserName!),
+                new(ClaimTypes.Email, user.Email!),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             foreach (var userRole in userRoles)
@@ -87,7 +78,15 @@ public class AuthController : ControllerBase
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
-            UserName = model.UserName
+            UserName = model.UserName,
+            Tipo = model.TipoUsuario,
+            Nome = model.Nome,
+            FotoPerfil = model.FotoPerfil,
+            Cidade = model.Cidade,
+            Estado = model.Estado,
+            Disponibilidade = model.Disponibilidade,
+            Formacao = model.Formacao,
+            Experiencia = model.Experiencia
         };
 
         var result = await _userManager.CreateAsync(user, model.Password!);

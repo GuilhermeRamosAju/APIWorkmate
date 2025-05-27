@@ -1,5 +1,6 @@
 ﻿using APIWorkmate.Context;
 using APIWorkmate.DTOs.Servico;
+using APIWorkmate.Enums;
 using APIWorkmate.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,14 +9,9 @@ namespace APIWorkmate.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ServicosController : ControllerBase
+public class ServicosController(AppDbContext context) : ControllerBase
 {
-    private readonly AppDbContext _context;
-
-    public ServicosController(AppDbContext context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ServicoReadDTO>>> GetServicos()
@@ -82,6 +78,18 @@ public class ServicosController : ControllerBase
     {
         try
         {
+            var usuario = await _context.Usuarios.FindAsync(servicoDTO.PrestadorId);
+
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            if (usuario.Tipo != TipoUsuario.Prestador)
+            {
+                return BadRequest("Apenas usuários do tipo Prestador podem criar serviços.");
+            }
+
             var servico = new Servico
             {
                 Titulo = servicoDTO.Titulo,
