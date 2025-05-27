@@ -36,11 +36,11 @@ builder.Services.AddIdentity<Usuario, IdentityRole<Guid>>()
     .AddDefaultTokenProviders();
 
 
-string mySqlConnection = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(mySqlConnection,
-    ServerVersion.AutoDetect(mySqlConnection)));
+    options.UseMySql(connectionString,
+    ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddAuthorization();
 var secretkey = builder.Configuration["JWT:SecretKey"] ?? throw new ArgumentException("Invalid secret key!!");
