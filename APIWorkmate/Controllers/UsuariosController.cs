@@ -144,7 +144,7 @@ public class UsuariosController : ControllerBase
     public async Task<ActionResult> FiltrarUsuarios(
        [FromQuery] string? nome,
        [FromQuery] string? localizacao,
-       [FromQuery] Guid? subcategoriaId,
+       [FromQuery] string? subcategoriaNome,
        [FromQuery] double? notaMinima
    )
     {
@@ -169,9 +169,9 @@ public class UsuariosController : ControllerBase
                 query = query.Where(u => u.Estado.Contains(localizacao) || u.Cidade.Contains(localizacao));
             }
 
-            if (subcategoriaId.HasValue)
+            if (!string.IsNullOrWhiteSpace(subcategoriaNome))
             {
-                query = query.Where(u => u.Especialidades!.Any(sc => sc.Id == subcategoriaId.Value));
+                query = query.Where(u => u.Especialidades!.Any(sc => sc.Nome == subcategoriaNome));
             }
 
             var usuariosFiltrados = await query
