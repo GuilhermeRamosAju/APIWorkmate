@@ -171,7 +171,7 @@ public class UsuariosController : ControllerBase
 
             if (!string.IsNullOrWhiteSpace(subcategoriaNome))
             {
-                query = query.Where(u => u.Especialidades!.Any(sc => sc.Nome == subcategoriaNome));
+                query = query.Where(u => u.Especialidades!.Any(sc => sc.Nome.StartsWith(subcategoriaNome)));
             }
 
             var usuariosFiltrados = await query
@@ -321,7 +321,6 @@ public class UsuariosController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao processar requisição.");
         }
     }
-
     [HttpPost("associar-especialidades")]
     public async Task<IActionResult> AssociarEspecialidades([FromBody] AssociarEspecialidadesDTO dto)
     {
@@ -341,17 +340,31 @@ public class UsuariosController : ControllerBase
             if (!subcategorias.Any())
                 return BadRequest("Nenhuma subcategoria válida fornecida.");
 
+            var idsJaAssociados = usuario.Especialidades.Select(e => e.Id).ToHashSet();
+            var subcategoriasAdicionadas = new List<string>();
+            var subcategoriasIgnoradas = new List<string>();
+
             foreach (var subcategoria in subcategorias)
             {
-                if (!usuario.Especialidades!.Any(es => es.Id == subcategoria.Id))
+                if (!idsJaAssociados.Contains(subcategoria.Id))
                 {
                     usuario.Especialidades.Add(subcategoria);
+                    subcategoriasAdicionadas.Add(subcategoria.Nome);
+                }
+                else
+                {
+                    subcategoriasIgnoradas.Add(subcategoria.Nome);
                 }
             }
 
             await _context.SaveChangesAsync();
 
-            return Ok("Subcategorias associadas com sucesso.");
+            return Ok(new
+            {
+                mensagem = "Processo concluído.",
+                adicionadas = subcategoriasAdicionadas,
+                jaAssociadas = subcategoriasIgnoradas
+            });
         }
         catch (Exception)
         {
