@@ -54,6 +54,7 @@ public class AuthController(ITokenService tokenService, UserManager<Usuario> use
 
             return Ok(new
             {
+                Id = user.Id,
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 RefreshToken = refreshToken,
                 Expiration = token.ValidTo
