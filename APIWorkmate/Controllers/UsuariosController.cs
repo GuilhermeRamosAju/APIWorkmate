@@ -341,6 +341,7 @@ public class UsuariosController : ControllerBase
                 return BadRequest("Nenhuma subcategoria válida fornecida.");
 
             var idsJaAssociados = usuario.Especialidades.Select(e => e.Id).ToHashSet();
+
             var subcategoriasAdicionadas = new List<string>();
             var subcategoriasIgnoradas = new List<string>();
 
@@ -361,14 +362,14 @@ public class UsuariosController : ControllerBase
 
             return Ok(new
             {
-                mensagem = "Processo concluído.",
+                mensagem = "Especialidades associadas com sucesso.",
                 adicionadas = subcategoriasAdicionadas,
                 jaAssociadas = subcategoriasIgnoradas
             });
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(500, "Erro ao associar especialidades.");
+            return StatusCode(500, $"Erro ao associar especialidades: {ex.Message}");
         }
     }
 

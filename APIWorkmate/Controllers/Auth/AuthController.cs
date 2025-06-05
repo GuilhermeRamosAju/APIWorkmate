@@ -75,6 +75,13 @@ public class AuthController(ITokenService tokenService, UserManager<Usuario> use
                 new Response { Status = "Erro", Message = "Usuário já existe!" });
         }
 
+        var userExistsByUsername = await _userManager.FindByNameAsync(model.UserName!);
+        if (userExistsByUsername != null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest,
+                new Response { Status = "Erro", Message = "Já existe um usuário com este nome de usuário!" });
+        }
+
         Usuario user = new()
         {
             Email = model.Email,

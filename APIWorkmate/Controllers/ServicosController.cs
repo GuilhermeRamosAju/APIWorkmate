@@ -78,16 +78,25 @@ public class ServicosController(AppDbContext context) : ControllerBase
     {
         try
         {
-            var usuario = await _context.Usuarios.FindAsync(servicoDTO.PrestadorId);
+            var usuario = await _context.Usuarios
+                .Include(u => u.Especialidades)
+                .FirstOrDefaultAsync(u => u.Id == servicoDTO.PrestadorId);
 
             if (usuario == null)
-            {
                 return NotFound("Usuário não encontrado.");
-            }
 
             if (usuario.Tipo != TipoUsuario.Prestador)
-            {
                 return BadRequest("Apenas usuários do tipo Prestador podem criar serviços.");
+
+            var subcategoria = await _context.Subcategorias.FindAsync(servicoDTO.SubcategoriaId);
+            if (subcategoria == null)
+                return BadRequest("Subcategoria inválida.");
+
+            var jaAssociado = usuario.Especialidades.Any(e => e.Id == subcategoria.Id);
+
+            if (!jaAssociado)
+            {
+                usuario.Especialidades.Add(subcategoria);
             }
 
             var servico = new Servico
@@ -119,11 +128,12 @@ public class ServicosController(AppDbContext context) : ControllerBase
 
             return CreatedAtAction(nameof(GetServico), new { id = servico.Id }, servicoReadDTO);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao criar o serviço.");
+            return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar o serviço: {ex.Message}");
         }
     }
+
 
     [HttpPut("{id:Guid}")]
     public async Task<IActionResult> UpdateServico(Guid id, ServicoUpdateDTO servicoDTO)
